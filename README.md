@@ -10,9 +10,8 @@ Zpracujte prosím samostatně následující zadání:
 6) natočit video, kde vlastními slovy popište funkci naprogramovaného kódu + ukázku zelených unit testů (tip na extra-rychlá videa přímo z prohlížeče: vidyard.com)
 6) přibalit zdrojový kód a poslat mailem
 7) nepovinný bod: vytvořte “docker compose”, který celé řešení spustí pro lokální vývoj
-Zadání prosím zpracujte a pošlete mi na jaros@inizio.cz. V e-mailu bude:
+Zadání prosím zpracujte a pošlete mi na email. V e-mailu bude:
 link na fungující řešení dle zadání výše
 odkaz na video popisující zdrojový kód
 ZIP soubor obsahující zdrojový kód
 Přidejte i své CV a motivační dopis, prosím.
-Bude-li vše v pořádku dle tohoto zadání, domluvíme si termín pohovoru.
