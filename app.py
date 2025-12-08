@@ -8,8 +8,6 @@ api_key = os.getenv("SERPAPI_KEY")
 app = Flask(__name__)
 CORS(app) # povoli vsechny cross-origin requesty
 
-print("SERPAPI_KEY:", os.getenv("SERPAPI_KEY"))
-
 def search_google_with_serpapi (query):
     api_key = os.getenv("SERPAPI_KEY")
     url = "https://serpapi.com/search"
