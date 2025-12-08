@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
 import os
@@ -32,6 +32,11 @@ def clean_serpapi_results(raw_json):
             "snippet": item.get("snippet")
         })
     return cleaned
+
+# --- NOVÁ ROUTA pro hlavní stránku ---
+@app.route("/")
+def index():
+    return render_template("index.html")  # Flask hledá soubory v templates/
 
 @app.route("/api/search", methods=["POST"])
 def api_search():

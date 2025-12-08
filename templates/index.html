@@ -1,0 +1,112 @@
+<!doctype html> <!-- states the modern HTML5 format for the browser to know how to interpret it -->
+<html lang="cs"> <!-- Korenovy HTML tag, language je cestina -->
+<head> <!-- hlavicka stranky: Věci, které nejsou přímo vidět, ale jsou důležité pro správné fungování a informují prohlížeč -->
+  <meta charset="utf-8" /> <!-- Používej kódování UTF-8, abys správně zobrazoval české znaky. -->
+  <meta name="viewport" content="width=device-width,initial-scale=1" />  <!-- "<meta" je TAG a name nebo content jsou ATRIBUTY,
+   viewport je misto pro zobrazeni stranky, sirka podle obrazovky zarizeni a scale znamena meritko inicialne na 1 = 100% 
+   ani zvetseno ani zmenseno -->
+  <style>
+  #query, #searchBtn {margin-bottom: 1em; /* 1em = výška písma, přibližně 16px */ }
+  </style>
+  <title>Google Search Simplified</title> <!-- název stránky, který se zobrazuje v záložce prohlížeče (nahoře) nebo ve výsledcích vyhledávání -->
+</head>
+<body> <!-- to, co je vidět(text, obrazky, interaktivni prvky, JavaScript, etc.) -->
+  <h1>Zobrazení výsledků Google vyhledávání</h1>
+
+  <!-- Vstupní pole, do kterého uživatel napíše klíčové slovo -->  <!-- characters for comments in HTML script -->
+  <label for="query">Zadej klíčové slovo:</label> <!-- input TAG je samotne okenko pro user's input, label znaci text upresnujici, co do pole napsat -->
+  <input id="query" type="text" placeholder="např. nejlepší káva" /> <!-- LABEL a INPUT se proppji pres "query", tzn kliknutim na text 
+  labelu se automaticky oznaci kurzor v poli ke psani INPUTu. "TYPE" Říká, jaký typ vstupu je povolen, Alternativy: password, date (kalendar),
+  email (overi format emailu), number. "PLACEHOLDER" - Text, který se zobrazí uvnitř inputu, dokud uživatel nezačne psát-->
+
+  <!-- Tlačítko pro odeslání -->
+  <button id="searchBtn">Hledat</button>
+
+  <!-- Zde se vypíše co backend vrati--> 
+  <div id="result"></div>
+
+  <button id="downloadBtn">Stáhnout výsledky v JSON formátu</button>
+
+  <script>
+    const inputField = document.getElementById('query');
+    const btn = document.getElementById('searchBtn');
+    const resultDiv = document.getElementById('result');
+    const downloadBtn = document.getElementById("downloadBtn");
+    
+    let lastResults = []; // sem uložíme poslední načtené výsledky
+
+    // Funkce pro hledání
+    async function searchQuery() {
+    const query = inputField.value.trim();
+    resultDiv.innerHTML = "";
+
+    if (!query) {
+        resultDiv.innerHTML = "<p>Zadejte dotaz!</p>";
+        return;
+    }
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/search", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query })
+        });
+
+        const data = await response.json();
+        lastResults = data; // <--- uložíme si je pro pozdější stažení
+
+        if (data.error) {
+            resultDiv.innerHTML = `<p>Chyba: ${data.error}</p>`;
+            return;
+        }
+
+        if (data.length === 0) {
+            resultDiv.innerHTML = "<p>Nebyly nalezeny žádné výsledky.</p>";
+            return;
+        }
+
+        data.forEach(item => {
+            const div = document.createElement("div");
+            div.style.marginBottom = "1em";
+            div.innerHTML = `<a href="${item.link}" target="_blank"><strong>${item.title}</strong></a>
+                             <p>${item.snippet || ""}</p>`;
+            resultDiv.appendChild(div);
+        });
+
+    } catch (err) {
+        resultDiv.innerHTML = `<p>Chyba při komunikaci se serverem: ${err}</p>`;
+    }
+    }
+
+    // Kliknutí na tlačítko
+    btn.addEventListener("click", () => {
+        searchQuery();
+    });
+
+    // Enter v inputu
+    inputField.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+            searchQuery();
+        }
+    });
+
+    // Listener pro tlačítko stažení
+    downloadBtn.addEventListener("click", () => {
+        if (!lastResults || lastResults.length === 0) {
+            alert("Nejsou žádné výsledky k uložení!");
+            return;
+        }
+
+        const jsonStr = JSON.stringify(lastResults, null, 2); // 2 = hezké odsazení
+        const blob = new Blob([jsonStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "výsledky_google.json"; // název souboru
+        a.click();
+
+        URL.revokeObjectURL(url); // uvolní paměť
+    });
+</script>
+</body>
+</html>
