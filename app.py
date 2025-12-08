@@ -56,4 +56,4 @@ def api_search():
 # return jsonify(results) # Flask musí převést Python objekt na:✔️ JSON string, ✔️ nastavit HTTP hlavičky (Content-Type: application/json), ✔️ serializovat vše, co jde do HTTP odpovědi
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
